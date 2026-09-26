@@ -1,21 +1,22 @@
 # dsh-wallet
 
-DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻显示 **DeepSeek 账户余额**、**今日累计成本**、**当前会话消耗** 与 **近 7 天消耗趋势**，一键跳转官方平台充值 / 管理 API Key。
+DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻面板，显示 **DeepSeek 账户余额**、**今日累计**、**本会话消耗**（悬停展开 token / 金额明细）与**可编辑提醒阈值**，一键打开官方充值 / API Key / 用量页；另注册模型工具 `query_deepseek_balance`。
 
 ## ✨ 功能
 
 | 模块 | 能力 |
 | --- | --- |
-| 余额查询 | 官方 `GET api.deepseek.com/user/balance`（Bearer 鉴权），CNY / USD 双余额池；失败自动指数退避重试 |
-| 今日累计 | 调官方平台用量接口 `platform.deepseek.com/api/v0/usage`（可选配 userToken），显示**今天真实消耗**；未配置则回退本地会话统计 |
-| 消耗趋势 | 近 **7 天**每日成本折线图，悬停显示日期与金额（轻量 SVG，无第三方图表库） |
-| 会话成本 | token-meter 投影 × 官方价格表，实时估算当前会话消耗；悬停展开输入 / 缓存命中 / 输出明细 |
-| 峰谷计价 | 内置 2026-08-17 生效的官方峰谷价，北京高峰时段（9:00–12:00、14:00–18:00）自动切换 |
-| 低余额告警 | CNY < ¥10 或 USD < $2 时标黄提醒 |
-| 提醒阈值 | 可编辑单会话阈值（默认 ¥5，**持久化**到 `~/.dsh/dsh-wallet.json`），超限提示新建对话 |
-| 系统通知 | 低余额 / 超阈值时浏览器系统通知（状态转变时触发一次） |
-| 一键跳转 | 「充值 / API Key / 明细」在 **DSH 窗口内**打开官方页（不弹系统浏览器） |
-| 模型工具 | 注册 `query_deepseek_balance`，直接问 AI「余额还剩多少」也能答 |
+| 余额查询 | 官方 `GET api.deepseek.com/user/balance`（Bearer 鉴权，读 DSH 凭据 `DEEPSEEK_API_KEY`），CNY / USD 双余额池，30 秒缓存；失败按 5s → 5min 指数退避重试 |
+| 今日累计 | 本地 session/event 事件流**分日聚合**，与「本会话消耗」同源（今日累计 ≥ 本会话的今日部分，不会出现假矛盾）。官方账单接口按小时桶结算、最近约 10~20 分钟未入账，只作后台校准参考，不作展示口径 |
+| 会话成本 | `sessionProjections` 的 tokenUsage × 价格表实时估算；`reasoningTokens` 已含在 `outputTokens` 内只计一次；悬停展开输入 / 缓存命中 / 输出明细 |
+| 峰谷计价 | 北京时间自动切档：**周末全天空闲价**，工作日 9:00–12:00、14:00–18:00 为高峰价（2026-08-17 00:00 起生效；Flash 于 2026-09-10 12:00 再次调价） |
+| 低余额告警 | CNY < ¥10 或 USD < $2 时标黄 |
+| 提醒阈值 | 单会话可编辑（默认 ¥5），**持久化**到 `~/.dsh/dsh-wallet.json`；超限提示新建对话 |
+| 系统通知 | 低余额 / 超阈值时浏览器系统通知，仅在状态转变时各触发一次 |
+| 一键跳转 | 面板底部「充值 / API Key / 明细」三个按钮 |
+| 模型工具 | `query_deepseek_balance` |
+
+> 面板数字是**本地估算**；与官方账单不符时以官方为准。
 
 ## 🖼 界面
 
@@ -27,16 +28,13 @@ DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻显示 **DeepSeek
 
 ![浅色](https://cdn.jsdelivr.net/gh/Ln1m/dsh-wallet@main/assets/screenshot-panel-light.png)
 
-折线图悬停显示日期 + 金额：
-
-![悬停](https://cdn.jsdelivr.net/gh/Ln1m/dsh-wallet@main/assets/screenshot-hover.png)
+面板可折叠：收起态一行「● 钱包 ¥30.39 CNY ↻ ⌄」，展开态：
 
 ```
-DeepSeek 钱包                     ↻
+钱包                        ↻  ⌄
 余额                   ¥30.39 CNY
 今日累计               ¥70.30
 本会话消耗 ¥1.23 [高峰价]   ← 悬停展开 token/金额明细
-▁▂▃▅▆▇                    ← 近 7 天趋势
 提醒阈值   ¥[5.00]
 [充值] [API Key] [明细]
 ```
@@ -45,63 +43,57 @@ DeepSeek 钱包                     ↻
 
 ```
 Host（Node 进程）
-├─ 余额查询：Node 原生 fetch → api.deepseek.com/user/balance（30s 缓存 + 指数退避）
-├─ 今日/趋势：官方 platform /api/v0/usage（userToken，5 分钟缓存）优先，本地 session/event 聚合兜底
+├─ 余额：原生 fetch → api.deepseek.com/user/balance（30s 缓存 + 指数退避）
+├─ 今日累计：session/event 事件流分日聚合；官方 platform /api/v0/usage 作后台校准
 ├─ 会话成本：sessionProjections.tokenUsage × 价格表（flash/pro，含峰谷）
 ├─ 阈值持久化：~/.dsh/dsh-wallet.json（启动加载，修改即存）
-├─ RPC：/wallet/api/balance · refresh · cost?session=<id> · usage · set-threshold
+├─ 路由：/wallet/api/balance · refresh · cost?session=<id> · usage · set-threshold
 └─ 模型工具：query_deepseek_balance
 
 Client（浏览器）
-├─ 入口：sidebar.footer.action（左栏底部常驻面板）
-├─ 余额 + 今日累计 + 本会话消耗 + 7 天折线图 + 提醒阈值 + 充值/API Key 入口
+├─ 入口：sidebar.footer.action（左栏底部常驻面板，可折叠）
+├─ 内容：余额 + 今日累计 + 本会话消耗 + 提醒阈值 + 充值/API Key/明细
 ├─ 当前会话 id 经 useSyncExternalStore 订阅 sessions.list，切换会话即时刷新
 └─ 系统通知：低余额 / 超阈值（Notification API）
 ```
 
-## 📦 安装
+## 📦 安装 / 更新
 
-### 一键安装（推荐）
+本机安装走本地真源：
 
-```bash
-dsh plugin add dsh-wallet
+```powershell
+$bin = "D:\DeepSeek_harness\node_modules\@deepseek-ai\dsh\lib\bin.js"
+node $bin plugin --profile web remove dsh-wallet
+node $bin plugin --profile web add file:D:/DeepSeek_harness/plugins/dsh-wallet
 ```
 
-`package.json` 已声明 `dsh.bundle.patch`，插件会自动注册到 profile，无需手动改 `cordis.patch.yml`。装完重启 `dsh web` 即可。
+源码真源：`D:\DeepSeek_harness\plugins\dsh-wallet`。改完源码须 remove + add 刷新运行副本（`~\.dsh\profiles\web\node_modules\dsh-wallet`），再重启 DSH。
 
-### 手动安装
-
-1. 将本目录放到 `~/.dsh/profiles/node_modules/dsh-wallet`
-2. 在 `~/.dsh/profiles/web/cordis.patch.yml` 追加：
-
-```yaml
-- insert:
-    - id: dsh-wallet
-      name: 'dsh-wallet'
-```
-
-3. 重启 `dsh web`
-
-> 注：「充值 / API Key」在 DSH 窗口内打开官方页，需要桌面端 dsh-desktop 处理 `NewWindowRequested` 事件，见 [`docs/DESKTOP-EMBED.md`](docs/DESKTOP-EMBED.md)。
+> 「充值 / API Key / 明细」要在 DSH 窗口内打开官方页，需要桌面端 dsh-desktop 处理 `NewWindowRequested` 事件，见 [`docs/DESKTOP-EMBED.md`](docs/DESKTOP-EMBED.md)。
 
 ## 📊 官方用量（可选）
 
-默认「今日累计 / 趋势」用**本地会话统计**。要更精确的**官方账单数据**，需配置平台 userToken：
+配好 `userToken` 后，官方账单数据只作**后台校准参考**（返回在 `/wallet/api/usage` 的 `official` / `officialToday` 字段），面板「今日累计」始终走本地实时聚合：
 
 1. 浏览器登录 [platform.deepseek.com](https://platform.deepseek.com)，F12 → Console 执行 `localStorage.getItem('userToken')`，复制返回 JSON 里的 `.value` 字段（不是 `sk-` 开头的 API Key）
 2. 写入 `~/.dsh/dsh-wallet.json` 的 `platformToken` 字段（或设 DSH 凭据 `DEEPSEEK_PLATFORM_TOKEN`）
 3. 重启 `dsh web`
 
-> userToken 是**会话级**的，会过期。失效后插件自动回退本地统计，并在面板提示「官方数据不可用」，重新取一次即可。
+> `userToken` 是**会话级**的，会过期。失效后插件静默回退本地统计。
 
 ## 💰 价格表（元 / 百万 token）
 
-| 模型 | 输入(缓存命中) | 输入(未命中) | 输出 | 峰谷 |
-| --- | --- | --- | --- | --- |
-| deepseek-v4-flash | 0.02 | 1 | 2 | 空闲 0.05/1.5/4.5 · 高峰 0.10/3.0/9.0 |
-| deepseek-v4-pro | 0.025 | 3 | 6 | 空闲 0.15/4.5/13.5 · 高峰 0.30/9.0/27.0 |
+2026-09-10 12:00 起现行：
 
-峰谷价于北京时间 2026-08-17 00:00 起生效，插件按当前时刻自动切换。
+| 模型 | 档位 | 缓存命中输入 | 未命中输入 | 输出 |
+| --- | --- | --- | --- | --- |
+| deepseek-v4-flash | 空闲价 | 0.02 | 1 | 4 |
+| deepseek-v4-flash | 高峰价 | 0.04 | 2 | 8 |
+| deepseek-v4-pro | 空闲价 | 0.15 | 4.5 | 13.5 |
+| deepseek-v4-pro | 高峰价 | 0.30 | 9.0 | 27.0 |
+
+- 峰谷计价自北京时间 2026-08-17 00:00 起生效；2026-08-17 之前的历史事件按基础价计（未命中输入 / 缓存命中输入 / 输出：flash 1 / 0.02 / 2，pro 3 / 0.025 / 6）。
+- 非峰谷的基础价会尝试从官方定价页抓取覆盖；峰谷价无公开解析标准，用插件内置硬编码。
 
 ## 许可
 

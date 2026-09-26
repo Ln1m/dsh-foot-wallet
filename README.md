@@ -1,5 +1,7 @@
 # dsh-wallet
 
+[English](README.en.md) · 中文
+
 DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻面板，显示 **DeepSeek 账户余额**、**今日累计**、**本会话消耗**（悬停展开 token / 金额明细）与**可编辑提醒阈值**，一键打开官方充值 / API Key / 用量页；另注册模型工具 `query_deepseek_balance`。
 
 ## ✨ 功能

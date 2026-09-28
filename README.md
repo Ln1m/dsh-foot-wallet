@@ -1,10 +1,10 @@
 # dsh-wallet
 
-> 不装 dsh-vk-suite 的零 vk 版在 [https://github.com/Ln1m/dsh-wallet/tree/official](https://github.com/Ln1m/dsh-wallet/tree/official)；当前 main 是双路版（没有 vk-suite 时自动走官方槽，装了才用 vk 的布局位）。
+> 本分支是 **vk 版**：只注册 vk 槽，需先装 [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite)（契约 + 骨架）。零 vk 版见 [official 分支](https://github.com/Ln1m/dsh-wallet/tree/official)。
 
 [English](README.en.md) · 中文
 
-DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻面板，显示 **DeepSeek 账户余额**、**今日累计**、**本会话消耗**（悬停展开 token / 金额明细）与**可编辑提醒阈值**，一键打开官方充值 / API Key / 用量页；另注册模型工具 `query_deepseek_balance`。**不依赖 vk-suite**：装了它就用它的 `vk.sidebar.footer` 槽（竖排常驻面板），没装则退回官方 `sidebar.footer.action` 槽，收成一枚钱包图标、点开向上弹出面板。
+DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻面板，显示 **DeepSeek 账户余额**、**今日累计**、**本会话消耗**（悬停展开 token / 金额明细）与**可编辑提醒阈值**，一键打开官方充值 / API Key / 用量页；另注册模型工具 `query_deepseek_balance`。**需先装 dsh-vk-suite**：面板落在它的 `vk.sidebar.footer` 槽（竖排常驻面板）。
 
 ## ✨ 功能
 
@@ -55,7 +55,7 @@ Host（Node 进程）
 └─ 模型工具：query_deepseek_balance
 
 Client（浏览器）
-├─ 入口：装了 vk-suite → vk.sidebar.footer（常驻面板）；未装 → sidebar.footer.action（图标形态，向上弹出面板）
+├─ 入口：vk.sidebar.footer（常驻面板，需先装 dsh-vk-suite）
 ├─ 内容：余额 + 今日累计 + 本会话消耗 + 提醒阈值 + 充值/API Key/明细
 ├─ 当前会话 id 经 useSyncExternalStore 订阅 sessions.list，切换会话即时刷新
 └─ 系统通知：低余额 / 超阈值（Notification API）

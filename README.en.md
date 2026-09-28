@@ -1,4 +1,6 @@
-﻿# dsh-wallet
+> A vk-free build lives on the [https://github.com/Ln1m/dsh-wallet/tree/official](https://github.com/Ln1m/dsh-wallet/tree/official); main is the dual-path version (official slots without vk-suite, vk layout seats with it).
+
+# dsh-wallet
 
 A DeepSeek Harness (DSH) wallet plugin — a persistent panel at the bottom of the left sidebar showing your **DeepSeek account balance**, **today's total**, **current-session cost** (hover for the token / cost breakdown) and an **editable alert threshold**, with one-click links to the official recharge / API-key / usage pages, plus the model tool `query_deepseek_balance`. **No vk-suite dependency**: with vk-suite it uses its `vk.sidebar.footer` slot (persistent panel); without it, it falls back to the official `sidebar.footer.action` slot as a wallet icon that pops the panel upward.
 

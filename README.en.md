@@ -1,8 +1,8 @@
 # dsh-wallet
 
-> A vk-free build lives on the [https://github.com/Ln1m/dsh-wallet/tree/official](https://github.com/Ln1m/dsh-wallet/tree/official); main is the dual-path version (official slots without vk-suite, vk layout seats with it).
+> This branch is the vk-free build: official slots only, no vk reference anywhere. The dual-path version is on [https://github.com/Ln1m/dsh-wallet/tree/main](https://github.com/Ln1m/dsh-wallet/tree/main).
 
-A DeepSeek Harness (DSH) wallet plugin — a persistent panel at the bottom of the left sidebar showing your **DeepSeek account balance**, **today's total**, **current-session cost** (hover for the token / cost breakdown) and an **editable alert threshold**, with one-click links to the official recharge / API-key / usage pages, plus the model tool `query_deepseek_balance`. **No vk-suite dependency**: with vk-suite it uses its `vk.sidebar.footer` slot (persistent panel); without it, it falls back to the official `sidebar.footer.action` slot as a wallet icon that pops the panel upward.
+A DeepSeek Harness (DSH) wallet plugin — a persistent panel at the bottom of the left sidebar showing your **DeepSeek account balance**, **today's total**, **current-session cost** (hover for the token / cost breakdown) and an **editable alert threshold**, with one-click links to the official recharge / API-key / usage pages, plus the model tool `query_deepseek_balance`. Registered in the official `sidebar.footer.action` slot: a wallet icon that pops the panel upward.
 
 ## ✨ Features
 
@@ -53,7 +53,7 @@ Host (Node process)
 └─ Model tool: query_deepseek_balance
 
 Client (browser)
-├─ Entry: vk-suite present → vk.sidebar.footer (persistent panel); otherwise → sidebar.footer.action (icon form, panel pops upward)
+├─ Entry: sidebar.footer.action (icon form, panel pops upward)
 ├─ Content: balance + today + session cost + threshold + Recharge/API Key/Usage
 ├─ Current session id via useSyncExternalStore over sessions.list
 └─ System notifications: low balance / over threshold (Notification API)

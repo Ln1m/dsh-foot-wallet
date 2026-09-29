@@ -72,7 +72,7 @@ Client（浏览器）
 
 ## 六、发布结果
 
-- GitHub：https://github.com/Ln1m/dsh-wallet（v1.0.1）
+- GitHub：https://github.com/Ln1m/dsh-foot-wallet（v1.0.1）
 - npm：dsh-wallet@1.0.1
 - 附带修复 dsh-lt-tasks 图片（0.2.3，README 改 jsdelivr）
 
@@ -107,6 +107,6 @@ Client（浏览器）
 
 ## 九、发布结果
 
-- GitHub：https://github.com/Ln1m/dsh-wallet（v1.3.1）
+- GitHub：https://github.com/Ln1m/dsh-foot-wallet（v1.3.1）
 - npm：dsh-wallet@1.3.1
 

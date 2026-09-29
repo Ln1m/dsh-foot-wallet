@@ -1,6 +1,6 @@
 # dsh-wallet
 
-> 本分支是 **vk 版**：只注册 vk 槽，需先装 [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite)（契约 + 骨架）。零 vk 版见 [official 分支](https://github.com/Ln1m/dsh-wallet/tree/official)。
+> 本分支是 **vk 版**：只注册 vk 槽，需先装 [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite)（契约 + 骨架）。零 vk 版见 [official 分支](https://github.com/Ln1m/dsh-foot-wallet/tree/official)。
 > **两个版本推荐用 vk 版**：左栏的 Tab 切换（会话 / 文件 / 任务 / 工具）与右栏、设置的位置都由 [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite)（契约 + 骨架）提供，vk 版才装得进这些位置；官方挂载版不依赖骨架，只挂官方槽，形态受官方界面限制。
 
 [English](README.en.md) · 中文
@@ -27,11 +27,11 @@ DeepSeek Harness（DSH）钱包插件 —— 左栏底部常驻面板，显示 *
 
 深色主题：
 
-![深色](https://cdn.jsdelivr.net/gh/Ln1m/dsh-wallet@main/assets/screenshot-panel.png)
+![深色](https://cdn.jsdelivr.net/gh/Ln1m/dsh-foot-wallet@main/assets/screenshot-panel.png)
 
 浅色主题：
 
-![浅色](https://cdn.jsdelivr.net/gh/Ln1m/dsh-wallet@main/assets/screenshot-panel-light.png)
+![浅色](https://cdn.jsdelivr.net/gh/Ln1m/dsh-foot-wallet@main/assets/screenshot-panel-light.png)
 
 面板可折叠：收起态一行「● 钱包 ¥30.39 CNY ↻ ⌄」，展开态：
 

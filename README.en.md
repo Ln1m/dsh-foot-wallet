@@ -1,7 +1,7 @@
 # dsh-wallet
 
-> This branch is the **vk build**: vk slots only, and [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite) (contract + layout) must be installed first. The vk-free build is on the [official branch](https://github.com/Ln1m/dsh-foot-wallet/tree/official).
-> **The vk build is the recommended one**: the sidebar tab switcher (Sessions / Files / Tasks / Extensions) plus the right-column and settings positions all come from the [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite) skeleton, so only the vk build lands in them; the vk-free build needs no skeleton but mounts into official slots only, shaped by the official UI.
+> Two builds: `main` is the **vk build** (vk slots only — install the [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite) contract + skeleton first); the `official` branch is the **vk-free build** (no vk dependency, official slots only). **Use the vk build** — position: pinned at the sidebar bottom (`vk.sidebar.footer`).
+> Conflicts: a slot renders only its highest-priority entry, and two registrations at the same priority throw; mutually exclusive with anything claiming the same position (see "How to use it / what it conflicts with" in [dsh-vk-suite](https://github.com/Ln1m/dsh-vk-suite)).
 
 A DeepSeek Harness (DSH) wallet plugin — a persistent panel at the bottom of the left sidebar showing your **DeepSeek account balance**, **today's total**, **current-session cost** (hover for the token / cost breakdown) and an **editable alert threshold**, with one-click links to the official recharge / API-key / usage pages, plus the model tool `query_deepseek_balance`. **Requires dsh-vk-suite**: the panel lands in its `vk.sidebar.footer` slot (persistent panel).
 
